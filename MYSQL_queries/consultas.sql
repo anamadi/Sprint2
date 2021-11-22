@@ -64,4 +64,4 @@ select g.nombre,a.tipo,count(a.id) as numero_asignaturas from asignatura a join 
 select c.anyo_inicio,count(a.id) as numero_alumnos from persona p join alumno_se_matricula_asignatura al on p.id= al.id_alumno join asignatura a on al.id_asignatura=a.id join curso_escolar c on al.id_curso_escolar=c.id group by c.anyo_inicio;
 select p.id,p.nombre,p.apellido1,p.apellido2, count(a.id) as numero_asignaturas from persona p join profesor pr on p.id=pr.id_profesor left join asignatura a on pr.id_profesor=a.id_profesor group by pr.id_profesor order by numero_asignaturas desc;
 select * , max(fecha_nacimiento) from persona where tipo='alumno';
--- Retorna un llistat amb els professors que tenen un departament associat i que no imparteixen cap assignatura.
+SELECT DISTINCT p.apellido1, p.apellido2,p.nombre FROM persona p JOIN profesor pr ON p.id = pr.id_profesor LEFT JOIN  asignatura a ON  a.id_profesor = pr.id_profesor WHERE a.id_profesor IS NULL;
