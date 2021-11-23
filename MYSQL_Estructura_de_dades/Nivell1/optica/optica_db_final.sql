@@ -17,6 +17,8 @@ USE `optica_db` ;
 -- -----------------------------------------------------
 -- Table `optica_db`.`PROVEEDOR`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `optica_db`.`PROVEEDOR` ;
+
 CREATE TABLE IF NOT EXISTS `optica_db`.`PROVEEDOR` (
   `NIF` VARCHAR(9) NOT NULL,
   `nombre` VARCHAR(45) NOT NULL,
@@ -34,6 +36,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `optica_db`.`GAFAS`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `optica_db`.`GAFAS` ;
+
 CREATE TABLE IF NOT EXISTS `optica_db`.`GAFAS` (
   `idgafas` INT NOT NULL AUTO_INCREMENT,
   `modelo` VARCHAR(45) NOT NULL,
@@ -58,6 +62,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `optica_db`.`CLIENTE`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `optica_db`.`CLIENTE` ;
+
 CREATE TABLE IF NOT EXISTS `optica_db`.`CLIENTE` (
   `idCliente` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
@@ -79,15 +85,17 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `optica_db`.`FACTURA`
+-- Table `optica_db`.`VENTAS`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `optica_db`.`FACTURA` (
-  `idFactura` INT NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `optica_db`.`VENTAS` ;
+
+CREATE TABLE IF NOT EXISTS `optica_db`.`VENTAS` (
+  `idventa` INT NOT NULL AUTO_INCREMENT,
   `empleado` VARCHAR(45) NOT NULL,
-  `fechaFactura` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fechaVenta` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `total` DECIMAL(9,2) NOT NULL,
   `CLIENTE_idCliente` INT NOT NULL,
-  PRIMARY KEY (`idFactura`),
+  PRIMARY KEY (`idventa`),
   INDEX `fk_FACTURA_CLIENTE1_idx` (`CLIENTE_idCliente` ASC),
   CONSTRAINT `fk_FACTURA_CLIENTE1`
     FOREIGN KEY (`CLIENTE_idCliente`)
@@ -98,24 +106,26 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `optica_db`.`LINEA_FACTURA`
+-- Table `optica_db`.`LINEA_VENTAS`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `optica_db`.`LINEA_FACTURA` (
-  `FACTURA_idFactura` INT NOT NULL,
+DROP TABLE IF EXISTS `optica_db`.`LINEA_VENTAS` ;
+
+CREATE TABLE IF NOT EXISTS `optica_db`.`LINEA_VENTAS` (
+  `VENTAS_idventa` INT NOT NULL,
   `id_linea` INT NOT NULL,
   `GAFAS_idgafas` INT NOT NULL,
-  `cantidad` INT NULL,
-  INDEX `fk_LINEA_FACTURA_FACTURA1_idx` (`FACTURA_idFactura` ASC),
+  `cantidad` INT NOT NULL,
   INDEX `fk_LINEA_FACTURA_GAFAS1_idx` (`GAFAS_idgafas` ASC),
-  PRIMARY KEY (`FACTURA_idFactura`, `id_linea`),
-  CONSTRAINT `fk_LINEA_FACTURA_FACTURA1`
-    FOREIGN KEY (`FACTURA_idFactura`)
-    REFERENCES `optica_db`.`FACTURA` (`idFactura`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
+  PRIMARY KEY (`VENTAS_idventa`, `id_linea`),
+  INDEX `fk_LINEA_VENTAS_VENTAS1_idx` (`VENTAS_idventa` ASC),
   CONSTRAINT `fk_LINEA_FACTURA_GAFAS1`
     FOREIGN KEY (`GAFAS_idgafas`)
     REFERENCES `optica_db`.`GAFAS` (`idgafas`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_LINEA_VENTAS_VENTAS1`
+    FOREIGN KEY (`VENTAS_idventa`)
+    REFERENCES `optica_db`.`VENTAS` (`idventa`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
