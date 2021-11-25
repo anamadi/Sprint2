@@ -98,15 +98,23 @@ DROP TABLE IF EXISTS `pizzeria_db`.`PEDIDO` ;
 CREATE TABLE IF NOT EXISTS `pizzeria_db`.`PEDIDO` (
   `idPedido` INT NOT NULL AUTO_INCREMENT,
   `fechaPedido` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `tipo` ENUM('domicilio', 'tienda') NOT NULL,
   `cantidadHamburguesas` INT NULL,
   `cantidadBebidas` INT NULL,
   `cantidadPizzas` INT NULL,
   `TIENDA_idTienda` INT UNSIGNED NOT NULL,
+  `CLIENTE_idCliente` INT NOT NULL,
   PRIMARY KEY (`idPedido`),
   INDEX `fk_PEDIDO_TIENDA1_idx` (`TIENDA_idTienda` ASC),
+  INDEX `fk_PEDIDO_CLIENTE1_idx` (`CLIENTE_idCliente` ASC),
   CONSTRAINT `fk_PEDIDO_TIENDA1`
     FOREIGN KEY (`TIENDA_idTienda`)
     REFERENCES `pizzeria_db`.`TIENDA` (`idTienda`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_PEDIDO_CLIENTE1`
+    FOREIGN KEY (`CLIENTE_idCliente`)
+    REFERENCES `pizzeria_db`.`CLIENTE` (`idCliente`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -123,6 +131,7 @@ CREATE TABLE IF NOT EXISTS `pizzeria_db`.`PRODUCTO` (
   `descripcion` VARCHAR(100) NOT NULL,
   `imagen` VARCHAR(45) NULL,
   `precio` DECIMAL(6,2) NOT NULL,
+  `tipo` ENUM('bebida', 'hamburguesa', 'pizza') NOT NULL,
   PRIMARY KEY (`idProducto`))
 ENGINE = InnoDB;
 
@@ -147,23 +156,6 @@ CREATE TABLE IF NOT EXISTS `pizzeria_db`.`PEDIDO_PRODUCTOS` (
   CONSTRAINT `fk_PEDIDO_PRODUCTOS_PRODUCTO1`
     FOREIGN KEY (`PRODUCTO_idProducto`)
     REFERENCES `pizzeria_db`.`PRODUCTO` (`idProducto`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `pizzeria_db`.`EN_TIENDA`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `pizzeria_db`.`EN_TIENDA` ;
-
-CREATE TABLE IF NOT EXISTS `pizzeria_db`.`EN_TIENDA` (
-  `PEDIDO_idPedido` INT NOT NULL,
-  INDEX `fk_EN_TIENDA_PEDIDO1_idx` (`PEDIDO_idPedido` ASC),
-  PRIMARY KEY (`PEDIDO_idPedido`),
-  CONSTRAINT `fk_EN_TIENDA_PEDIDO1`
-    FOREIGN KEY (`PEDIDO_idPedido`)
-    REFERENCES `pizzeria_db`.`PEDIDO` (`idPedido`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
@@ -214,40 +206,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `pizzeria_db`.`HAMBURGUESA`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `pizzeria_db`.`HAMBURGUESA` ;
-
-CREATE TABLE IF NOT EXISTS `pizzeria_db`.`HAMBURGUESA` (
-  `PEDIDO_idPedido` INT NOT NULL,
-  INDEX `fk_HAMBURGUESA_PEDIDO1_idx` (`PEDIDO_idPedido` ASC),
-  PRIMARY KEY (`PEDIDO_idPedido`),
-  CONSTRAINT `fk_HAMBURGUESA_PEDIDO1`
-    FOREIGN KEY (`PEDIDO_idPedido`)
-    REFERENCES `pizzeria_db`.`PEDIDO` (`idPedido`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `pizzeria_db`.`BEBIDA`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `pizzeria_db`.`BEBIDA` ;
-
-CREATE TABLE IF NOT EXISTS `pizzeria_db`.`BEBIDA` (
-  `PEDIDO_idPedido` INT NOT NULL,
-  INDEX `fk_BEBIDA_PEDIDO1_idx` (`PEDIDO_idPedido` ASC),
-  PRIMARY KEY (`PEDIDO_idPedido`),
-  CONSTRAINT `fk_BEBIDA_PEDIDO1`
-    FOREIGN KEY (`PEDIDO_idPedido`)
-    REFERENCES `pizzeria_db`.`PEDIDO` (`idPedido`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `pizzeria_db`.`CATEGORIA`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `pizzeria_db`.`CATEGORIA` ;
@@ -265,19 +223,19 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `pizzeria_db`.`PIZZA` ;
 
 CREATE TABLE IF NOT EXISTS `pizzeria_db`.`PIZZA` (
-  `PEDIDO_idPedido` INT NOT NULL,
+  `PRODUCTO_idProducto` INT NOT NULL,
   `CATEGORIA_idCategoria` INT NOT NULL,
-  INDEX `fk_PIZZA_PEDIDO1_idx` (`PEDIDO_idPedido` ASC),
   INDEX `fk_PIZZA_CATEGORIA1_idx` (`CATEGORIA_idCategoria` ASC),
-  PRIMARY KEY (`PEDIDO_idPedido`),
-  CONSTRAINT `fk_PIZZA_PEDIDO1`
-    FOREIGN KEY (`PEDIDO_idPedido`)
-    REFERENCES `pizzeria_db`.`PEDIDO` (`idPedido`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
+  INDEX `fk_PIZZA_PRODUCTO1_idx` (`PRODUCTO_idProducto` ASC),
+  PRIMARY KEY (`PRODUCTO_idProducto`),
   CONSTRAINT `fk_PIZZA_CATEGORIA1`
     FOREIGN KEY (`CATEGORIA_idCategoria`)
     REFERENCES `pizzeria_db`.`CATEGORIA` (`idCategoria`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_PIZZA_PRODUCTO1`
+    FOREIGN KEY (`PRODUCTO_idProducto`)
+    REFERENCES `pizzeria_db`.`PRODUCTO` (`idProducto`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
